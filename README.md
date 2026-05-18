@@ -1,80 +1,49 @@
-AWS Aruba Invoice Reminder System
-Overview
+# AWS Serverless Invoice Reminder Pipeline
 
-Serverless AWS pipeline that processes Aruba electronic invoice XML files, extracts payment and due-date information, stores structured data in DynamoDB, and automatically sends reminder emails before invoice expiration.
+## Overview
 
-The project is designed to be:
+This project implements a serverless AWS pipeline for processing Aruba electronic invoice XML files, extracting relevant payment and due-date information, storing structured invoice metadata in Amazon DynamoDB, and sending automated reminder emails before invoice expiration.
 
-fully serverless
-event-driven
-low-cost / AWS Free Tier friendly
-scalable and modular
-Architecture
-Aruba XML Files
-        ↓
+The project was designed as a hands-on AWS Data Engineering and Solution Architecture exercise, with a focus on event-driven architecture, serverless services, cost optimization, monitoring, and security best practices.
+
+## Business Scenario
+
+Companies often receive electronic invoices in XML format and need a reliable way to track payment deadlines, monitor invoice status, and notify operators before due dates expire.
+
+This project simulates a real-world workflow where invoice files are uploaded to Amazon S3 and automatically processed by AWS Lambda. Extracted metadata is stored in DynamoDB and later used by a scheduled reporting process to send reminder emails through Amazon SES.
+
+This use case is relevant for operations, finance, procurement, administration, and logistics environments.
+
+## Architecture
+
+The solution follows an event-driven serverless architecture.
+
+```text
+Aruba XML Invoice
+        |
+        v
 Amazon S3
-        ↓ (trigger)
-AWS Lambda - XML Parser
-        ↓
+Raw XML Storage
+        |
+        v
+S3 Event Notification
+        |
+        v
+AWS Lambda
+XML Parser
+        |
+        v
 Amazon DynamoDB
-        ↓ (scheduled execution)
+Invoice Metadata
+        |
+        v
 Amazon EventBridge
-        ↓
-AWS Lambda - Reporting
-        ↓
+Scheduled Rule
+        |
+        v
+AWS Lambda
+Reminder Reporter
+        |
+        v
 Amazon SES
-        ↓
-Email Reminder Report
-AWS Services Used
-Service	Purpose
-Amazon S3	Raw XML storage
-AWS Lambda	XML parsing and reporting logic
-Amazon DynamoDB	Invoice metadata storage
-Amazon EventBridge	Scheduled automation
-Amazon SES	Email notification system
-Amazon CloudWatch	Logging and monitoring
-AWS IAM	Permissions and security
-Features
-XML invoice ingestion
-Automated event-driven processing
-Invoice data extraction
-Due-date monitoring
-Automatic email reminders
-Serverless architecture
-Cost-optimized AWS design
-CloudWatch logging and debugging
-Extracted Invoice Data
-
-The pipeline extracts and stores:
-
-Supplier name
-Invoice number
-Invoice date
-Due date
-Total amount
-Payment amount
-Payment status
-S3 source path
-Project Structure
-aws-aruba-invoice-reminder-system/
-│
-├── lambda/
-│   ├── parser/
-│   └── reporting/
-│
-├── architecture/
-│
-├── sample_data/
-│
-├── policies/
-│
-├── docs/
-│
-└── README.md
-Example Workflow
-XML invoice uploaded to S3
-S3 triggers Lambda automatically
-Lambda parses XML invoice
-Structured data stored in DynamoDB
-EventBridge runs scheduled reporting Lambda
-SES sends email reminder report
+Email Reminder
