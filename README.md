@@ -105,7 +105,7 @@ The pipeline is designed to extract and store:
 
 ## Technical Documentation
 
-- [Presentation Slides](docs/presentation.html) — _(HTML deck; opens in the browser, also published via GitHub Pages)_
+- [Presentation Slides](https://albesavvy.github.io/serverless-invoice-reminder-pipeline/docs/presentation.html) — interactive HTML deck (via GitHub Pages)
 - [Architecture Overview](architecture/README.md) — Mermaid diagram of the pipeline
 - [Detailed Architecture Diagram](architecture/architecture-diagram.md) — annotated Mermaid (two-phase flow + proposed evolution)
 - [Data Flow](architecture/data-flow.md)
