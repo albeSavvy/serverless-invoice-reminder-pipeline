@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoice Reminder Pipeline — Presentation</title>
+<style>
+  :root{
+    --navy:#232f3e; --orange:#ff9900; --blue:#146eb4;
+    --ink:#1b2733; --muted:#5a6572; --line:#d4dae2; --bg:#0d1b2a;
+    --ok:#1b7f4d;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:"Segoe UI",Arial,sans-serif; background:var(--bg);
+    color:var(--ink); overflow:hidden;
+  }
+  .deck{height:100vh; width:100vw; position:relative;}
+  .slide{
+    position:absolute; inset:0; display:none; flex-direction:column;
+    justify-content:center; padding:6vh 8vw; background:#f4f6f9;
+    animation:fade .35s ease;
+  }
+  .slide.active{display:flex;}
+  @keyframes fade{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;}}
+
+  .slide.cover{background:linear-gradient(135deg,#232f3e 0%,#0d1b2a 100%); color:#fff; justify-content:center;}
+  .slide.cover h1{font-size:4.6vw; line-height:1.1;}
+  .slide.cover h1 span{color:var(--orange);}
+  .slide.cover .tag{font-size:1.6vw; color:#aeb8c4; margin-top:2vh;}
+  .slide.cover .pill{display:inline-block; margin-top:4vh; font-size:1.2vw; color:#0d1b2a; background:var(--orange); padding:.6vh 1.4vw; border-radius:999px; font-weight:700;}
+
+  h2.title{font-size:2.6vw; color:var(--navy); margin-bottom:3vh; border-left:6px solid var(--orange); padding-left:1.2vw;}
+  .lead{font-size:1.9vw; line-height:1.5; color:var(--ink); max-width:72vw;}
+  ul.points{list-style:none; font-size:1.5vw; line-height:1.9;}
+  ul.points li{padding-left:2.4vw; position:relative; margin-bottom:1.2vh;}
+  ul.points li::before{content:"\25B8"; color:var(--orange); position:absolute; left:0; font-weight:700;}
+  ul.points li b{color:var(--navy);}
+  .ok li::before{content:"\2713"; color:var(--ok);}
+
+  .flow{display:flex; align-items:stretch; gap:1vw; margin-top:2vh;}
+  .flow .box{flex:1; background:#fff; border:1px solid var(--line); border-top:5px solid var(--orange); border-radius:12px; padding:2vh 1.2vw;}
+  .flow .box h3{font-size:1.25vw; color:var(--navy); margin-bottom:1vh;}
+  .flow .box p{font-size:1.0vw; color:var(--muted); line-height:1.4;}
+  .flow .sep{align-self:center; font-size:2.4vw; color:var(--blue);}
+
+  .two{display:flex; gap:3vw;}
+  .two .col{flex:1;}
+  .two .col h3{font-size:1.5vw; color:var(--navy); margin-bottom:1.5vh;}
+
+  table.svc{border-collapse:collapse; font-size:1.15vw; margin-top:2vh; background:#fff; width:100%;}
+  table.svc th,table.svc td{border:1px solid var(--line); padding:1vh 1vw; text-align:left;}
+  table.svc th{background:var(--navy); color:#fff;}
+  table.svc td b{color:var(--blue);}
+
+  .note{margin-top:3vh; font-size:1.1vw; color:var(--muted); font-style:italic;}
+
+  .nav{position:fixed; bottom:2.5vh; right:3vw; display:flex; gap:1vw; align-items:center; z-index:10;}
+  .nav button{font-size:1.1vw; background:var(--navy); color:#fff; border:none; border-radius:8px; padding:1vh 1.4vw; cursor:pointer;}
+  .nav button:hover{background:var(--blue);}
+  .counter{position:fixed; bottom:2.5vh; left:3vw; font-size:1vw; color:var(--muted); z-index:10;}
+  .hint{position:fixed; top:2.5vh; right:3vw; font-size:.9vw; color:var(--muted); z-index:10;}
+</style>
+</head>
+<body>
+  <div class="deck" id="deck">
+
+    <!-- 1. COVER -->
+    <section class="slide cover active">
+      <h1><span>Invoice Reminder</span><br>Serverless pipeline for invoice due dates</h1>
+      <p class="tag">Event-driven ingestion · scheduled processing · automated reminders</p>
+      <span class="pill">AWS Solutions Architect / Data Engineer portfolio project</span>
+    </section>
+
+    <!-- 2. PROBLEM -->
+    <section class="slide">
+      <h2 class="title">The problem</h2>
+      <p class="lead">
+        Tracking electronic invoice (Aruba XML) due dates <b>by hand</b> is tedious
+        and error-prone. A missed deadline means a late payment and repetitive
+        manual checking.
+      </p>
+      <p class="note">A concrete admin need, ideal for serverless automation.</p>
+    </section>
+
+    <!-- 3. SOLUTION -->
+    <section class="slide">
+      <h2 class="title">The solution — what the pipeline does</h2>
+      <p class="lead">An AWS system that ingests invoices and sends a reminder before the due date, with no servers.</p>
+      <div class="flow">
+        <div class="box"><h3>1 · Ingest</h3><p>The XML invoice lands in S3. The event wakes a Lambda that reads it.</p></div>
+        <div class="sep">&rarr;</div>
+        <div class="box"><h3>2 · Store</h3><p>Metadata (due date, amount, supplier) goes into DynamoDB.</p></div>
+        <div class="sep">&rarr;</div>
+        <div class="box"><h3>3 · Check</h3><p>EventBridge, on a schedule, wakes a Lambda that finds invoices nearing their due date.</p></div>
+        <div class="sep">&rarr;</div>
+        <div class="box"><h3>4 · Notify</h3><p>SES sends the reminder email before the due date.</p></div>
+      </div>
+      <p class="note">Two decoupled triggers: event (ingestion) + schedule (reminder).</p>
+    </section>
+
+    <!-- 4. ARCHITECTURE -->
+    <section class="slide">
+      <h2 class="title">Architecture — event-driven in two phases</h2>
+      <div class="flow">
+        <div class="box"><h3>Phase 1 · Push</h3><p><b>S3</b> receives the XML.<br><b>ObjectCreated</b> event &rarr; <b>parser Lambda</b> &rarr; <b>DynamoDB</b>.<br><br>Work happens only when an invoice arrives.</p></div>
+        <div class="sep">&rarr;</div>
+        <div class="box"><h3>State</h3><p><b>DynamoDB</b> holds the metadata.<br><br>It is the only contact point between the two phases: full decoupling.</p></div>
+        <div class="sep">&rarr;</div>
+        <div class="box"><h3>Phase 2 · Pull</h3><p><b>EventBridge</b> schedule &rarr; <b>reporter Lambda</b> queries DynamoDB &rarr; <b>SES</b> sends the reminder.</p></div>
+      </div>
+      <p class="note">Full technical diagram: <b>architecture/architecture-diagram.md</b> (Mermaid)</p>
+    </section>
+
+    <!-- 5. SERVICES AND WHY -->
+    <section class="slide">
+      <h2 class="title">AWS services — and why</h2>
+      <table class="svc">
+        <tr><th>Function</th><th>Service</th><th>Why this one</th></tr>
+        <tr><td>Ingestion + event</td><td><b>Amazon S3</b></td><td>Durable, native event, no servers</td></tr>
+        <tr><td>Processing</td><td><b>AWS Lambda</b></td><td>Event-driven compute, pay per ms, zero idle</td></tr>
+        <tr><td>Metadata</td><td><b>DynamoDB</b></td><td>Serverless, key access, no idle cost</td></tr>
+        <tr><td>Scheduling</td><td><b>EventBridge</b></td><td>Managed cron, no machine running</td></tr>
+        <tr><td>Notifications</td><td><b>Amazon SES</b></td><td>Low-cost application email, IAM</td></tr>
+        <tr><td>Logs + security</td><td><b>CloudWatch + IAM</b></td><td>Native observability, least privilege</td></tr>
+      </table>
+    </section>
+
+    <!-- 6. VALUE + NEXT -->
+    <section class="slide">
+      <h2 class="title">Value and next steps</h2>
+      <div class="two">
+        <div class="col">
+          <h3>Why it matters (SA / DEA path)</h3>
+          <ul class="points">
+            <li>Clean <b>event-driven</b> pattern: push + schedule decoupled.</li>
+            <li>Fully <b>serverless</b>, cost-conscious, IAM least privilege.</li>
+            <li>Aligned with the <b>DEA-C01</b> certification.</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h3>Next steps (known limits)</h3>
+          <ul class="points">
+            <li>Rewrite in <b>IaC (AWS CDK Python)</b>: today it is console/CLI.</li>
+            <li><b>SQS + DLQ</b> between S3 and Lambda for buffering and resilience.</li>
+            <li><b>CloudWatch alarms</b> on Lambda errors.</li>
+            <li><b>Unit tests</b> on XML parsing + Athena/QuickSight on the data.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="note">Architectural honesty: the limits are stated and already have an evolution plan.</p>
+    </section>
+
+  </div>
+
+  <div class="counter"><span id="cur">1</span> / <span id="tot">6</span></div>
+  <div class="hint">&larr; &rarr; to navigate · F11 fullscreen</div>
+  <div class="nav">
+    <button onclick="go(-1)">&lsaquo; Back</button>
+    <button onclick="go(1)">Next &rsaquo;</button>
+  </div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let i = 0;
+  document.getElementById('tot').textContent = slides.length;
+  function show(n){
+    slides[i].classList.remove('active');
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides[i].classList.add('active');
+    document.getElementById('cur').textContent = i + 1;
+  }
+  function go(d){ show(i + d); }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') go(1);
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') go(-1);
+    if (e.key === 'Home') show(0);
+    if (e.key === 'End') show(slides.length - 1);
+  });
+</script>
+</body>
+</html>

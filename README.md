@@ -105,9 +105,11 @@ The pipeline is designed to extract and store:
 
 ## Technical Documentation
 
-- [Architecture Diagram](architecture/README.md)
+- [Presentation Slides](docs/presentation.html) — _(HTML deck; opens in the browser, also published via GitHub Pages)_
+- [Architecture Overview](architecture/README.md) — Mermaid diagram of the pipeline
+- [Detailed Architecture Diagram](architecture/architecture-diagram.md) — annotated Mermaid (two-phase flow + proposed evolution)
 - [Data Flow](architecture/data-flow.md)
-- [Design Decisions](architecture/design-decisions.md)
+- [Design Decisions](architecture/design-decisions.md) — the "why" of each service, alternatives, trade-offs
 - [Project Overview](docs/project-overview.md)
 - [Setup Guide](docs/setup-guide.md)
 - [Cost Optimization](docs/cost-optimization.md)
