@@ -96,6 +96,7 @@ The pipeline is designed to extract and store:
 ## Future Improvements
 
 - Add production-ready XML parsing for more invoice formats
+- Support PDF / scanned invoices via Amazon Textract (`AnalyzeExpense`) — OCR for unstructured documents, where a plain XML parser does not apply
 - Add SQS between S3 and Lambda for better decoupling
 - Add Dead Letter Queue for failed processing
 - Add CloudWatch alarms on Lambda errors
