@@ -19,9 +19,15 @@ It includes:
 
 ## Why I Built It
 
-I built this project to practice AWS serverless and data engineering concepts in a realistic administrative and operations-oriented scenario.
+> **Learning project.** Built to study AWS serverless and data engineering
+> services hands-on, using an administrative scenario as an example. The scenario
+> and any data are illustrative and fictitious: this project is not intended for,
+> nor used in, any real-world setting.
 
-The goal was to move beyond theoretical study and implement a practical automation workflow that could support invoice monitoring, payment tracking, and operational reminders.
+I built this project to practice AWS serverless and data engineering concepts on a
+realistic-looking example scenario, moving beyond theory into a working pipeline
+that exercises S3 ingestion, Lambda processing, DynamoDB storage, EventBridge
+scheduling, and SES notifications end to end.
 
 ## Architecture at a Glance
 
