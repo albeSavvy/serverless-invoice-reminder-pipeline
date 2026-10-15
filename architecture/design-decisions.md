@@ -75,14 +75,14 @@ leave the SES sandbox, in exchange for very low cost and managed deliverability.
 
 ## Main Tradeoffs
 
-| Decision | Benefit | Tradeoff |
-|---|---|---|
-| Lambda | Low cost and scalable | Not ideal for long-running jobs |
-| S3 trigger | Simple event-driven ingestion | Requires careful trigger configuration |
-| DynamoDB | Serverless and scalable | Requires access pattern planning; no joins |
-| EventBridge | Managed scheduling, no cron server | One more service to learn |
-| SES | Low-cost email service | Requires verified identities in sandbox |
-| Manual setup | Good for learning | Less repeatable than IaC |
+| Decision | Alternative rejected (why not) | Benefit | Tradeoff |
+|---|---|---|---|
+| Lambda | EC2 / containers always-on — *paying for idle compute on a sporadic load* | Low cost and scalable | Not ideal for long-running jobs |
+| S3 trigger | Polling S3 on a schedule — *wasted runs, work even when nothing arrives* | Simple event-driven ingestion | Requires careful trigger configuration |
+| DynamoDB | RDS / Aurora — *always-on (idle cost) + connection pooling from Lambda* | Serverless and scalable | Requires access pattern planning; no joins |
+| EventBridge | Cron on an EC2 box — *a server kept running just to fire a timer* | Managed scheduling, no cron server | One more service to learn |
+| SES | External SMTP server — *another server to run and secure* | Low-cost email service | Requires verified identities in sandbox |
+| Manual setup | — | Good for learning | Less repeatable than IaC |
 
 ## Future Architecture Improvements
 
